@@ -14,7 +14,9 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 const App = () => {
   // Estados para el nombre del cliente, fecha de reserva, lista de clientes, y visibilidad del modal
   const [nombre, setNombre] = useState('');
-  const [fechaReserva, setFechaReserva] = useState(new Date());
+  const [carnet, setCarnet] = useState('');
+  const [materiaFavorita, setMateriaFavorita] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState(new Date());
   const [clientes, setClientes] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -27,7 +29,7 @@ const App = () => {
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date; // Si no se selecciona ninguna fecha, se mantiene la actual
     setShow(false); // Oculta el datetimepicker
-    setFechaReserva(currentDate); // Establece la fecha de reserva seleccionada en el estado
+    setFechaNacimiento(currentDate); // Establece la fecha de nacimiento seleccionada en el estado
   };
 
   // Función para mostrar el datetimepicker con el modo especificado (date o time)
@@ -44,12 +46,20 @@ const App = () => {
   // Función para agregar un nuevo cliente
   const agregarCliente = () => {
     // Genera un nuevo cliente con un ID único (incrementa el último ID generado)
-    const nuevoCliente = { id: clientes.length + 1, nombre: nombre, fechaReserva: fechaReserva };
+    const nuevoCliente = {
+      id: clientes.length + 1,
+      nombre: nombre,
+      carnet: carnet,
+      materiaFavorita: materiaFavorita,
+      fechaNacimiento: fechaNacimiento,
+    };
     // Agrega el nuevo cliente a la lista de clientes
     setClientes([...clientes, nuevoCliente]);
     // Limpia los campos de entrada
     setNombre('');
-    setFechaReserva(new Date());
+    setCarnet('');
+    setMateriaFavorita('');
+    setFechaNacimiento(new Date());
     // Oculta el modal de agregar cliente
     setModalVisible(false);
   };
@@ -82,10 +92,26 @@ const App = () => {
               value={nombre}
               onChangeText={setNombre}
             />
+            {/* Campo de entrada para el carnet del cliente */}
+            <TextInput
+              style={styles.input}
+              placeholder="Carnet del Cliente"
+              value={carnet}
+              onChangeText={setCarnet}
+            />
+            {/* Campo de entrada para la materia favorita del cliente */}
+            <TextInput
+              style={styles.input}
+              placeholder="Materia Favorita"
+              value={materiaFavorita}
+              onChangeText={setMateriaFavorita}
+            />
+            {/* Texto en negrita para seleccionar fecha de nacimiento */}
+            <Text style={styles.textoNegrita}>Selecciona fecha de nacimiento</Text>
             {/* Botón para mostrar el datetimepicker */}
-            <TouchableOpacity onPress={showDatepicker}><Text>Seleccionar fecha de Reserva</Text></TouchableOpacity>
+            <TouchableOpacity onPress={showDatepicker}><Text>Seleccionar fecha de Nacimiento</Text></TouchableOpacity>
             {/* Muestra la fecha seleccionada */}
-            <Text>selected: {fechaReserva.toLocaleString()}</Text>
+            <Text>Seleccionado: {fechaNacimiento.toLocaleString()}</Text>
             {/* Muestra el datetimepicker si la variable show es verdadera */}
             {show && (
               <DateTimePicker
@@ -93,12 +119,12 @@ const App = () => {
                 value={date}
                 mode={mode}
                 is24Hour={false}
+                display="spinner"
                 onChange={onChange}
-                locale='es-ES' // Establece el idioma del datetimepicker a español
               />
             )}
             {/* Botón para agregar el cliente */}
-            <Button title="Agregar Cliente" onPress={agregarCliente} />
+            <Button title="Registrar" onPress={agregarCliente} />
             {/* Botón para cancelar y cerrar el modal */}
             <Button
               title="Cancelar"
@@ -116,12 +142,12 @@ const App = () => {
             style={styles.clienteItem}
             onPress={() => eliminarCliente(item.id)}
           >
-            
             {/* Muestra el ID, nombre y fecha de reserva del cliente */}
-            <Text style={styles.clienteNombre}>{item.id}</Text>
-            <Text style={styles.clienteNombre}>{item.nombre}</Text>
+            <Text style={styles.clienteNombre}>Nombre: {item.nombre}</Text>
+            <Text style={styles.clienteNombre}>Carnet: {item.carnet}</Text>
+            <Text style={styles.clienteNombre}>Materia Favorita: {item.materiaFavorita}</Text>
             <Text style={styles.clienteFecha}>
-              Fecha de Reserva: {item.fechaReserva.toDateString()}
+              Fecha de Nacimiento: {item.fechaNacimiento.toDateString()}
             </Text>
           </TouchableOpacity>
         )}
@@ -134,7 +160,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#001222',
+    backgroundColor: '#fff',
     padding: 20,
   },
   modalContainer: {
@@ -156,12 +182,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
+  textoNegrita: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
   clienteItem: {
     backgroundColor: '#f0f0f0',
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
-    marginTop:5
   },
   clienteNombre: {
     fontSize: 18,
